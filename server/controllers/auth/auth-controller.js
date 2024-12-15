@@ -4,7 +4,7 @@ const User = require("../../models/User");
 
 //register
 const registerUser = async (req, res) => {
-  const { userName, email, password } = req.body;
+  const { userName, email, password, role } = req.body; // Include role here
 
   try {
     const checkUser = await User.findOne({ email });
@@ -19,6 +19,7 @@ const registerUser = async (req, res) => {
       userName,
       email,
       password: hashPassword,
+      role: role || "user", // Set role to 'user' by default
     });
 
     await newUser.save();
@@ -36,6 +37,7 @@ const registerUser = async (req, res) => {
 };
 
 //login
+//login
 const loginUser = async (req, res) => {
   const { email, password } = req.body;
 
@@ -44,7 +46,7 @@ const loginUser = async (req, res) => {
     if (!checkUser)
       return res.json({
         success: false,
-        message: "User doesn't exists! Please register first",
+        message: "User doesn't exist! Please register first",
       });
 
     const checkPasswordMatch = await bcrypt.compare(
@@ -60,7 +62,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       {
         id: checkUser._id,
-        role: checkUser.role,
+        role: checkUser.role, // Include role in the token
         email: checkUser.email,
         userName: checkUser.userName,
       },
@@ -73,7 +75,7 @@ const loginUser = async (req, res) => {
       message: "Logged in successfully",
       user: {
         email: checkUser.email,
-        role: checkUser.role,
+        role: checkUser.role, // Send the role in the response
         id: checkUser._id,
         userName: checkUser.userName,
       },
@@ -82,10 +84,11 @@ const loginUser = async (req, res) => {
     console.log(e);
     res.status(500).json({
       success: false,
-      message: "Some error occured",
+      message: "Some error occurred",
     });
   }
 };
+
 
 //logout
 

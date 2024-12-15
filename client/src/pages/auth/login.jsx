@@ -4,7 +4,7 @@ import { loginFormControls } from "@/config";
 import { loginUser } from "@/store/auth-slice";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const initialState = {
   email: "",
@@ -14,6 +14,7 @@ const initialState = {
 function AuthLogin() {
   const [formData, setFormData] = useState(initialState);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   function onSubmit(event) {
@@ -24,6 +25,14 @@ function AuthLogin() {
         toast({
           title: data?.payload?.message,
         });
+
+        // Check the role from the response (user/admin) and navigate accordingly
+        const role = data?.payload?.user?.role;
+        if (role === "admin") {
+          navigate("/admin/dashboard");  // Admin Dashboard route
+        } else {
+          navigate("/user/dashboard");  // User Dashboard route
+        }
       } else {
         toast({
           title: data?.payload?.message,

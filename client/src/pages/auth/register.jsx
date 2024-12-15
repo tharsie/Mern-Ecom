@@ -10,6 +10,7 @@ const initialState = {
   userName: "",
   email: "",
   password: "",
+  role: "user", // Default role is user, admin can be selected if needed
 };
 
 function AuthRegister() {
@@ -20,6 +21,7 @@ function AuthRegister() {
 
   function onSubmit(event) {
     event.preventDefault();
+
     dispatch(registerUser(formData)).then((data) => {
       if (data?.payload?.success) {
         toast({
@@ -34,8 +36,6 @@ function AuthRegister() {
       }
     });
   }
-
-  console.log(formData);
 
   return (
     <div className="mx-auto w-full max-w-md space-y-6">
@@ -53,6 +53,7 @@ function AuthRegister() {
           </Link>
         </p>
       </div>
+
       <CommonForm
         formControls={registerFormControls}
         buttonText={"Sign Up"}
@@ -60,6 +61,19 @@ function AuthRegister() {
         setFormData={setFormData}
         onSubmit={onSubmit}
       />
+      
+      {/* Admin Role Dropdown */}
+      <div className="mt-4">
+        <label className="block text-sm font-medium text-gray-700">Select Role</label>
+        <select
+          value={formData.role}
+          onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+          className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+        >
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
     </div>
   );
 }
